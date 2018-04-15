@@ -4,8 +4,6 @@
 #include "libs/EntryText.hpp"
 #include "libs/WindowManager.hpp"
 
-#include <ncurses.h>
-
 using namespace graphics;
 
 #define MAIN_WINDOW 0
@@ -25,11 +23,12 @@ main(int argc, char **argv) {
     getch();
     WindowManager * mg = new WindowManager();
 
-    /* mg->callLoginWindow(); */
-    /* mg->callFileSelectorWindow(); */
+    mg->callLoginWindow();
+    mg->callFileSelectorWindow();
     mg->callMainWindow();
-    /* getch(); */
+    getch();
     /* graphics::hideOutput(true); */
+
     /* EntryText * entry = new EntryText(LOGIN, 12, 50,  1, 1, ""); */
 
     /* entry->display(); */

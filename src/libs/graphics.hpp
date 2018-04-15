@@ -27,6 +27,7 @@ namespace graphics {
     static int moveCursor(WINDOW * win, unsigned y, unsigned x);
     static int print(WINDOW * w, const char * fmt, ...);
     static int getMaxYX(WINDOW *win, int * y, int * x);
+    static int scrolLok(WINDOW * win, bool set);
 
 
     static bool borders;
@@ -151,6 +152,11 @@ graphics::keyPad(WINDOW * win, bool set) {
 int
 graphics::getMaxYX(WINDOW * win, int * y, int * x) {
     return getmaxyx(win, *y, *x);
+}
+
+int
+graphics::scrolLok(WINDOW * win, bool set) {
+    return scrollok(win, set);
 }
 
 #endif /* end of include guard: GRAPHICS_HPP_ */

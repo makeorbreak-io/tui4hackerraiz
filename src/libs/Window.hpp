@@ -39,6 +39,7 @@ typedef enum widget_type_ {
     BUFFER_WIDGET,
     BORDERED_WIDGET,
     DECORATED_WINDOW,
+    PAD_WINDOW,
     MENU_WINDOW
 } WidgetType;
 
@@ -52,6 +53,7 @@ struct window_child_ {
 
 typedef WINDOW BufferWidget;
 typedef WINDOW BorderedWidget;
+typedef WINDOW PadWidget;
 
 namespace graphics {
     class Window {

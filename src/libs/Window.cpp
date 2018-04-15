@@ -597,22 +597,29 @@ Window::addWidget(WidgetType type, size_t h, size_t w, unsigned y, unsigned x) {
     child->id = ++this->id;
     child->type = type;
 
-    child->child = derwin(getParent(), h, w, y, x);
+
+    /* child->child = derwin(getParent(), h, w, y, x); */
+    switch (type) {
+        case BUFFER_WIDGET: {
+            /* todo */
+            child->child = derwin(getParent(), h, w, y, x);
+            break;
+        } case BORDERED_WIDGET: {
+            child->child = derwin(getParent(), h, w, y, x);
+            box (child->child, 0, 0);
+            break;
+        } case PAD_WINDOW: {
+            child->child = subpad(this->getParent(),h, w, y, x);
+            box(child->child, 0, 0);
+        }
+    }
+
     if (!child->child) {
         --this->id;
         delete (child);
         return NULL;
     }
-    switch (type) {
-        case BUFFER_WIDGET: {
-            /* todo */
 
-            break;
-        } case BORDERED_WIDGET: {
-            box (child->child, 0, 0);
-            break;
-        }
-    }
 
     this->children.push_back(child);
 
