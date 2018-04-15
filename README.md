@@ -3,7 +3,7 @@
 
 ### >TUI - Text User Interface_
 
->Do you love text based tools and softwares?
+Do you love text based tools and softwares?
 
 Do you love linux terminal? Have you ever wandered why so few CLI applications for day-to-day use, like music-players, video-players, file managers, etc. 
 
