@@ -105,6 +105,8 @@ Menu::Menu(const char ** choices, unsigned nchoices, size_t height,
     this->nchoices = nchoices;
     this->choices = (ITEM **) calloc (nchoices + 1, sizeof (ITEM *));
 
+
+    this->type = NORMAL;
     for (unsigned i = 0; i < nchoices; i++) {
         this->choices[i] = new_item(choices[i], descriptions[i]);
     }
@@ -228,6 +230,19 @@ Menu::handleKeys(void) {
                 break;
             }
         }
-
     }
+}
+
+bool
+Menu::display() {
+    this->postMenu();
+    Window::display();
+}
+
+int
+Menu::setToolBar(void) {
+    this->type = TOOLBAR;
+    this->unpostMenu();
+    set_menu_format(this->getParent(), 1, this->nchoices);
+    doupdate();
 }

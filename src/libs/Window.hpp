@@ -58,9 +58,8 @@ typedef WINDOW PadWidget;
 namespace graphics {
     class Window {
     public:
-        Window(size_t height, size_t width_, unsigned x, unsigned y, string title);
+        Window(size_t height, size_t width_, unsigned x, unsigned y, string title); // decorated window
         Window(size_t height, size_t width_, unsigned x, unsigned y);   // lines, columns, begin x, begin y
-
         Window();                       // plots a maximized window inside the terminal
         ~Window();
 
@@ -142,6 +141,7 @@ namespace graphics {
         unsigned x;
         unsigned y;
 
+        void new_window(size_t h, size_t w, unsigned y, unsigned x, const char * tiitle);
         void addTitleBar(WINDOW * win, string title, size_t x);
 
     };

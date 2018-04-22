@@ -16,6 +16,12 @@ using namespace std;
 
 
 namespace graphics {
+
+    typedef enum {
+        NORMAL,
+        TOOLBAR,
+    }MenuType;
+
     class Menu: public Window {
      public:
         Menu(const char ** choices, unsigned n_choices);
@@ -46,11 +52,13 @@ namespace graphics {
         int setMenuSubWin(WINDOW * subwin);
         int setMenuSubWin(size_t h, size_t w, unsigned y, unsigned x);
         int setMenuMark(string mark);
+        int setToolBar(void);
 
         // misc
         int postMenu(void);
         int unpostMenu(void);
         int freeItem(ITEM * item);
+        bool display();
 
         string handleKeys(void);
 
@@ -58,6 +66,7 @@ namespace graphics {
         MENU * parent;
         ITEM ** choices;
         ITEM * cur_item;
+        MenuType type;
         unsigned nchoices;
         unsigned b;
         string mark;

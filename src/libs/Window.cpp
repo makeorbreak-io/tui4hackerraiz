@@ -20,11 +20,22 @@ static UserDataList panelList;
 
 /* unsigned Window::id = 0; */
 
-Window::Window(void) {
-    getmaxyx(stdscr, this->height, this->width_);
+
+void
+Window::new_window (size_t h, size_t w, unsigned y, unsigned x, const char * title) {
+    this->height = h;
+    this->width_ = w;
+    if (h == 0 || w == 0)
+        getmaxyx(stdscr, this->height, this->width_);
+
     this->parent = newwin(this->height, this->width_, 0, 0);
 
-    this->type = BORDERED_WIDGET;
+    this->type = (!title ? BORDERED_WIDGET : DECORATED_WINDOW);
+
+    if (this->type == DECORATED_WINDOW) {
+        this->decoration_padding = 3;
+        this->addTitleBar(this->parent, title, 2);
+    }
 
     this->panel = new_panel(this->parent);
     PanelUserData * data = new PanelUserData;
@@ -50,72 +61,19 @@ Window::Window(void) {
     update_panels();
 
     hide_panel(this->panel);
+}
 
+Window::Window(void) {
+    this->new_window(0, 0, 0, 0, NULL);
 }
 
 Window::Window(size_t height, size_t width_, unsigned x, unsigned y) {
-    /* getmaxyx(stdscr, this->height, this->width_); */
-    this->parent = newwin(height, width_, y, x);
-
-    this->type = BORDERED_WIDGET;
-
-    box(this->parent, 0, 0);
-
-    this->panel = new_panel(this->parent);
-    PanelUserData * data = new PanelUserData;
-    data->hidden = true;
-    data->focused = false;
-
-    if (!panelList.begin) {
-        panelList.begin = data;
-        panelList.end = data;
-    } else {
-        panelList.end->next = data;
-        panelList.end = data;
-    }
-
-    data->next = NULL;
-    data->id = panelList.counter++;
-
-    this->id = 0;
-    set_panel_userptr (this->panel, data);
-
-    hide_panel (this->panel);
-    update_panels();
+    this->new_window(height, width_, y, x, NULL);
 
 }
 
 Window::Window(size_t height, size_t width_, unsigned x, unsigned y, string title) {
-    this->parent = newwin(height, width_, y, x);
-    box(this->parent, 0, 0);
-
-    this->type = DECORATED_WINDOW;
-    this->decoration_padding = 3;
-
-    this->addTitleBar(this->parent, title, 2);
-
-    this->panel = new_panel(this->parent);
-    PanelUserData * data = new PanelUserData;
-    data->hidden = true;
-    data->focused = false;
-
-    if (!panelList.begin) {
-        panelList.begin = data;
-        panelList.end = data;
-    } else {
-        panelList.end->next = data;
-        panelList.end = data;
-    }
-
-    data->next = NULL;
-    data->id = panelList.counter++;
-
-    this->id = 0;
-
-    set_panel_userptr (this->panel, data);
-
-    hide_panel (this->panel);
-    update_panels();
+    this->new_window (height, width_, y, x, title.c_str());
 
 }
 
@@ -203,7 +161,7 @@ Window::display() {
 
     this->focus();
 
-    this->refresh();
+    show_panel(this->getPanel());
 
     update_panels();
     doupdate();
@@ -223,7 +181,10 @@ Window::hide() {
     data->focused = false;
 
     if (hide_panel(getPanel())) {
+#ifdef DEBUG_
         printw("hidden1\n");
+#endif
+
     }
 
     this->update();
@@ -286,7 +247,8 @@ Window::print(int id, string content, size_t y, size_t x) {
     size_t h;
     size_t w;
 
-    getHeightAndWidth(h, w);
+    this->getHeightAndWidth(h, w);
+
 
     if ((x > w) || (y > h))
         return false;
@@ -340,6 +302,9 @@ Window::print(int id, string content, size_t y, size_t x) {
 
 bool
 Window::print(int id, unsigned y, unsigned x, const char * fmt, ...) {
+    if (y < this->decoration_padding)
+        return false;
+
     WindowChild * child;
     va_list args;
     va_start(args, fmt);
@@ -611,10 +576,14 @@ Window::addWidget(WidgetType type, size_t h, size_t w, unsigned y, unsigned x) {
         } case PAD_WINDOW: {
             child->child = subpad(this->getParent(),h, w, y, x);
             box(child->child, 0, 0);
+        } default: {
+            delete(child);
+            break;
         }
+
     }
 
-    if (!child->child) {
+    if (!child || !child->child) {
         --this->id;
         delete (child);
         return NULL;

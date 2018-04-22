@@ -2,12 +2,15 @@ CFLAGS=-lncurses -lpanel -lmenu
 CC=cc_args.py g++
 OBJFLAG=-c
 GRAPHICS=graphics.cpp
-LIBFILES=Window.cpp Menu.cpp EntryText.cpp WindowManager.cpp
-LIBOBJ=Window.o Menu.o EntryText.o WindowManaget.o
+GRAPHICSOBJ=graphics.o
+LIBFILES=$(GRAPHICSOBJ) Window.cpp Menu.cpp
+# LIBFILES=$(GRAPHICSOBJ) Window.cpp
+# LIBOBJ=$(GRAPHICSOBJ) Window.o
+LIBOBJ=$(GRAPHICSOBJ) Window.o Menu.o
 DEBUG=-DDEBUG_
 
 libs:
-	# $(CC) $(GRAPHICS) $(OBJFLAG)
+	$(CC) $(GRAPHICS) $(OBJFLAG)
 	$(CC) $(LIBFILES) $(OBJFLAG) $(CFLAGS)
 
 debuglibs:
